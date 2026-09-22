@@ -1,0 +1,415 @@
+#:import App kivy.app.App
+
+# Tela base, contem o que todas as telas terao
+<BaseScreen>:
+	FloatLayout:
+		# Muda a cor do background desenhando um quadrado de seu respectivo tamanho
+		canvas.before:
+			Color:
+				rgba: 0/255, 10/255, 24/255, 1
+			Rectangle:
+				size: self.size
+				pos: self.pos
+			
+			Color:
+				rgba: 4/255, 22/255, 40/255, 1
+			RoundedRectangle:
+				size: (self.size[0], self.size[0]*0.2)
+				pos: (0, self.height-self.size[0]*0.2)
+				radius: [0,0,app.ui*0.05,app.ui*0.05]
+		
+		# Classe que detecta o clique
+		Click:
+			# Preencher a tela inteira
+			size_hint: 1, 1
+		# Texto do FPS na tela
+		Label:
+			text: app.fps_text
+			font_size: 26
+			size_hint: None, None
+			size: self.texture_size
+			pos_hint: {"x": 0, "top": 1}
+		
+		# Titulo
+		Label:
+			# Detalhes do texto
+			text: "iSnake"
+			font_size: app.ui*0.1
+			color: (180/255, 250/255, 245/255, 1)
+			size_hint: None, None
+			size: self.texture_size
+			font_name: "data/font/montserrat-3.ttf"
+			pos_hint: {"center_x": 0.5, "top": 0.975}
+		
+		# Assinatura
+		Label:
+			# Detalhes do texto
+			text: "euLuann"
+			font_size: app.ui*0.05
+			color: (20/255, 45/255, 68/255, 1)
+			size_hint: None, None
+			size: self.texture_size
+			font_name: "data/font/montserrat-3.ttf"
+			pos_hint: {"x": 0, "y": 0}
+
+# Tela de menu
+<MenuScreen>:
+	# Nome da tela
+	name: "menu"
+	
+	# Layout
+	FloatLayout:
+		orientation: "vertical"
+		
+		# Desenha a logo
+		Image:
+			source: "data/sprites/logo.png"
+			pos_hint: {"center_x":0.5, "center_y":0.60}
+			size_hint: 0.35,0.35
+		
+		# Botao de play
+		Button:
+			# Detalhes do botao
+			text: "Play"
+			font_size: app.ui*0.044
+			color: (245/255, 245/255, 245/255, 1) if self.state == "normal" else (130/255, 208/255, 155/255, 1)
+			font_name: "data/font/font.ttf"
+			size_hint: 0.55, 0.055
+			pos_hint: {"center_x": 0.5, "center_y": 0.435}
+			# Fundo invisivel para ser substituido pelo retangulo arredondado do canvas
+			background_color: 0, 0, 0, 0
+			
+			# Canvas before para ser antes do texto do botao
+			canvas.before:
+				# Cor do retangulo
+				Color:
+					rgba: (180/255, 250/255, 245/255, 1)
+				# Detalhes do retangulo
+				RoundedRectangle:
+					# Dados do background ja existente do botao
+					pos: self.pos
+					size: self.size
+					# Raio da borda arredondada
+					radius: [app.ui*0.040]
+					
+				# Cor do retangulo
+				Color:
+					# Varia de acordo com o self.state, pois o self.state varia automaticamente ao interagir com o botao
+					rgba: (8/255, 34/255, 40/255, 1) if self.state == "normal" else (8/255, 45/255, 50/255, 1)
+				# Detalhes do retangulo
+				RoundedRectangle:
+					# Dados do background ja existente do botao
+					pos: (self.pos[0]+self.size[0]*0.005, self.pos[1]+self.size[1]*0.01)
+					size: (self.size[0]*0.99, self.size[1]*0.98)
+					# Raio da borda arredondada
+					radius: [app.ui*0.041]
+			
+			# Mudar de tela ao soltar
+			on_release:
+				root.manager.current = "game"
+		
+		# Botao de snake solver
+		Button:
+			# Detalhes do botao
+			text: "Snake Solver"	
+			font_size: app.ui*0.038
+			color: (245/255, 245/255, 245/255, 1) if self.state == "normal" else (130/255, 208/255, 155/255, 1)
+			font_name: "data/font/font.ttf"
+			size_hint: 0.45, 0.045
+			pos_hint: {"center_x": 0.5, "center_y": 0.365}
+			# Fundo invisivel para ser substituido pelo retangulo arredondado do canvas
+			background_color: 0, 0, 0, 0
+			
+			# Canvas before para ser antes do texto do botao
+			canvas.before:
+				
+				# Cor do retangulo
+				Color:
+					rgba: (180/255, 250/255, 245/255, 1)
+				# Detalhes do retangulo
+				RoundedRectangle:
+					# Dados do background ja existente do botao
+					pos: self.pos
+					size: self.size
+					# Raio da borda arredondada
+					radius: [app.ui*0.032]
+					
+				# Cor do retangulo
+				Color:
+					# Varia de acordo com o self.state, pois o self.state varia automaticamente ao interagir com o botao
+					rgba: (8/255, 34/255, 40/255, 1) if self.state == "normal" else (8/255, 45/255, 50/255, 1)
+				# Detalhes do retangulo
+				RoundedRectangle:
+					# Dados do background ja existente do botao
+					pos: (self.pos[0]+self.size[0]*0.005, self.pos[1]+self.size[1]*0.01)
+					size: (self.size[0]*0.99, self.size[1]*0.98)
+					# Raio da borda arredondada
+					radius: [app.ui*0.032]
+			
+			# Mudar de tela ao soltar
+			on_release:
+				root.manager.current = "solver"
+
+# Tela base que tera tudo que os dois modos de jogo tera
+<SnakeBaseScreen>:
+	# Layout
+	FloatLayout:
+		
+		# Botao de voltar para menu
+		Button:
+			# Detalhes do botao
+			text: "Back"	
+			font_size: app.ui*0.034
+			color: (245/255, 245/255, 245/255, 1) if self.state == "normal" else (130/255, 208/255, 155/255, 1)
+			font_name: "data/font/font.ttf"
+			size_hint: 0.15, 0.05
+			pos_hint: {"x": 0.03, "top": 0.97}
+			# Fundo invisivel para ser substituido pelo retangulo arredondado do canvas
+			background_color: 0, 0, 0, 0
+			
+			# Canvas before para ser antes do texto do botao
+			canvas.before:
+				# Cor do retangulo
+				Color:
+					# Varia de acordo com o self.state, pois o self.state varia automaticamente ao interagir com o botao
+					rgba: (8/255, 45/255, 70/255, 1) if self.state == "normal" else (8/255, 55/255, 90/255, 1)
+				# Detalhes do retangulo
+				RoundedRectangle:
+					# Dados do background ja existente do botao
+					pos: (self.pos[0]+self.size[0]*0.005, self.pos[1]+self.size[1]*0.01)
+					size: (self.size[0]*0.99, self.size[1]*0.98)
+					# Raio da borda arredondada
+					radius: [app.ui*0.032,0,0,app.ui*0.032]
+			
+			# Mudar de tela ao clicar
+			on_release:
+				root.manager.current = "menu"
+		
+		# Score
+		Label:
+			# Detalhes do texto
+			text: "Apples"
+			font_size: app.ui*0.05
+			size_hint: None, None
+			size: self.texture_size
+			font_name: "data/font/montserrat-1.ttf"
+			pos_hint: {"x": 0.02, "center_y": 0.767}
+		# Pontuacao
+		Label:
+			# Detalhes do texto
+			text: str(root.score)
+			font_size: app.ui*0.05
+			size_hint: None, None
+			size: self.texture_size
+			font_name: "data/font/montserrat-0.ttf"
+			pos_hint: {"x": 0.24, "center_y": 0.766}
+		
+		# Timer
+		Label:
+			# Detalhes do texto
+			text: f"{int(root.timer/60):02}:{int(root.timer%60):02}"
+			font_size: app.ui*0.06
+			size_hint: None, None
+			size: self.texture_size
+			font_name: "data/font/montserrat-0.ttf"
+			#pos_hint: {"center_x": 0.86, "center_y": 0.766}
+			pos_hint: {"right": 0.94, "center_y": 0.766}
+		# Milisegundos do timer
+		Label:
+			# Detalhes do texto
+			text: f"{int(root.timer*100)-int(root.timer)*100:02}"
+			font_size: app.ui*0.02
+			size_hint: None, None
+			size: self.texture_size
+			font_name: "data/font/montserrat-0.ttf"
+			pos_hint: {"x": 0.943, "center_y": 0.760}
+		
+		# speed
+		Label:
+			# Detalhes do texto
+			text: f"Moves" if root.game_running else f"Limit"
+			font_size: app.ui*0.06
+			size_hint: None, None
+			size: self.texture_size
+			font_name: "data/font/montserrat-0.ttf"
+			pos_hint: {"center_x": 0.5, "center_y": 0.234}
+		Label:
+			# Detalhes do texto
+			text: f"{root.move_speed}/s" if root.game_running else f"{root.moves_speed_limit} Mps"
+			font_size: app.ui*0.05
+			size_hint: None, None
+			size: self.texture_size
+			font_name: "data/font/montserrat-0.ttf"
+			pos_hint: {"center_x": 0.5, "center_y": 0.204}
+		# Botao de pausar e despausar
+		Button:
+			# Detalhes do botao
+			text: "" if root.game_win else "" if root.game_running else "" if root.game_over else ""
+			font_size: app.ui*0.08
+			color: (245/255, 245/255, 245/255, 1) if self.state == "normal" else (130/255, 208/255, 155/255, 1)
+			font_name: "data/font/nerdfont.ttf"
+			size_hint: 0.10, 0.05
+			pos_hint: {"right": 0.95, "center_y": 0.81}
+			
+			# Fundo invisivel para ser substituido pelo retangulo arredondado do canvas
+			background_color: 0, 0, 0, 0
+			
+			# Canvas before para ser antes do texto do botao
+			canvas.before:
+					
+				# Cor do retangulo
+				Color:
+					# Varia de acordo com o self.state, pois o self.state varia automaticamente ao interagir com o botao
+					rgba: (8/255, 45/255, 70/255, 1) if self.state == "normal" else (8/255, 55/255, 90/255, 1)
+				# Detalhes do retangulo
+				RoundedRectangle:
+					# Dados do background ja existente do botao
+					pos: (self.pos[0]+self.size[0]*0.015, self.pos[1]+self.size[1]*0.015)
+					size: (self.size[0]*0.97, self.size[1]*0.97)
+					# Raio da borda arredondada
+					radius: [app.ui*0.032]
+			
+			# Pausar ou despausar ao soltar
+			on_release:
+				root.replay_game() if root.game_win else root.replay_game() if root.game_over else root.toggle_pause()
+				 
+				
+		# Botao de aumentar a velocidade limite
+		Button:
+			# Detalhes do botao
+			text: ""
+			font_size: app.ui*0.08
+			color: (245/255, 245/255, 245/255, 0.35) if root.game_running else (245/255, 245/255, 245/255, 1) if self.state == "normal" else (130/255, 208/255, 155/255, 1)
+			font_name: "data/font/nerdfont.ttf"
+			size_hint: 0.10, 0.05
+			pos_hint: {"center_x": 0.66, "center_y": 0.224}
+			
+			# Fundo invisivel para ser substituido pelo retangulo arredondado do canvas
+			background_color: 0, 0, 0, 0
+			
+			# Canvas before para ser antes do texto do botao
+			canvas.before:
+					
+				# Cor do retangulo
+				Color:
+					# Varia de acordo com o self.state, pois o self.state varia automaticamente ao interagir com o botao
+					rgba: (8/255, 45/255, 70/255, 0.35) if root.game_running else (8/255, 45/255, 70/255, 1) if self.state == "normal" else (8/255, 55/255, 90/255, 1)
+				# Detalhes do retangulo
+				RoundedRectangle:
+					# Dados do background ja existente do botao
+					pos: (self.pos[0]+self.size[0]*0.015, self.pos[1]+self.size[1]*0.015)
+					size: (self.size[0]*0.97, self.size[1]*0.97)
+					# Raio da borda arredondada
+					radius: [app.ui*0.032]
+			
+			# Aumentar velocidade limite da cobra
+			on_press:
+				root.speed_limit_up_button_press(-1) if not root.game_running else None
+			on_release:
+				root.hold_button_release() if not root.game_running else None
+		
+		# Botao de diminuir a velocidade limite
+		Button:
+			# Detalhes do botao
+			text: ""
+			font_size: app.ui*0.08
+			color: (245/255, 245/255, 245/255, 0.35) if root.game_running else (245/255, 245/255, 245/255, 1) if self.state == "normal" else (130/255, 208/255, 155/255, 1)
+			font_name: "data/font/nerdfont.ttf"
+			size_hint: 0.10, 0.05
+			pos_hint: {"center_x": 0.66, "center_y": 0.170}
+			
+			# Fundo invisivel para ser substituido pelo retangulo arredondado do canvas
+			background_color: 0, 0, 0, 0
+			
+			# Canvas before para ser antes do texto do botao
+			canvas.before:
+					
+				# Cor do retangulo
+				Color:
+					# Varia de acordo com o self.state, pois o self.state varia automaticamente ao interagir com o botao
+					rgba: (8/255, 45/255, 70/255, 0.35) if root.game_running else (8/255, 45/255, 70/255, 1) if self.state == "normal" else (8/255, 55/255, 90/255, 1)
+				# Detalhes do retangulo
+				RoundedRectangle:
+					# Dados do background ja existente do botao
+					pos: (self.pos[0]+self.size[0]*0.015, self.pos[1]+self.size[1]*0.015)
+					size: (self.size[0]*0.97, self.size[1]*0.97)
+					# Raio da borda arredondada
+					radius: [app.ui*0.032]
+			
+			# Aumentar velocidade limite da cobra
+			on_press:
+				root.speed_limit_down_button_press(-1) if not root.game_running else None
+			on_release:
+				root.hold_button_release() if not root.game_running else None
+				
+				
+		# Botao de ativar e desativar gradiente
+		Button:
+			# Detalhes do botao
+			text: "󱝊"
+			font_size: app.ui*0.08
+			color: (245/255, 245/255, 245/255, 1) if self.state == "normal" else (130/255, 208/255, 155/255, 1)
+			font_name: "data/font/nerdfont.ttf"
+			size_hint: 0.10, 0.05
+			pos_hint: {"right": 0.95, "center_y": 0.224}
+			
+			# Fundo invisivel para ser substituido pelo retangulo arredondado do canvas
+			background_color: 0, 0, 0, 0
+			
+			# Canvas before para ser antes do texto do botao
+			canvas.before:
+					
+				# Cor do retangulo
+				Color:
+					# Varia de acordo com o self.state, pois o self.state varia automaticamente ao interagir com o botao
+					rgba: (180/255, 250/255, 245/255, 1) if root.color_gradient else (100/255, 170/255, 165/255, 0.5)
+				# Detalhes do retangulo
+				RoundedRectangle:
+					# Dados do background ja existente do botao
+					pos: (self.pos[0], self.pos[1])
+					size: (self.size[0], self.size[1])
+					# Raio da borda arredondada
+					radius: [app.ui*0.032]
+					
+				# Cor do retangulo
+				Color:
+					# Varia de acordo com o self.state, pois o self.state varia automaticamente ao interagir com o botao
+					rgba: (8/255, 45/255, 70/255, 1) if self.state == "normal" else (8/255, 55/255, 90/255, 1)
+				# Detalhes do retangulo
+				RoundedRectangle:
+					# Dados do background ja existente do botao
+					pos: (self.pos[0]+self.size[0]*0.015, self.pos[1]+self.size[1]*0.015)
+					size: (self.size[0]*0.97, self.size[1]*0.97)
+					# Raio da borda arredondada
+					radius: [app.ui*0.032]
+			
+			# Ativa ou desativa gradiente ao soltar
+			on_release:
+				root.toggle_gradient()
+
+
+# Tela de jogo
+<GameScreen>:
+	# Nome da tela
+	name: "game"
+	
+	# Layout
+	FloatLayout:
+		orientation: "vertical"
+		
+# Tela de jogo automatico
+<SolverScreen>:
+	# Nome da tela
+	name: "solver"
+	
+	# Layout
+	FloatLayout:
+		orientation: "vertical"
+		
+		# Texto
+		Label:
+			# Detalhes do texto
+			text: "Solver"
+			size_hint: None, None
+			size: self.texture_size
+			pos_hint: {"center_x": 0.5, "center_y": 0.5}
