@@ -1,3 +1,8 @@
+#!/usr/bin/python3
+# encoding: utf-8
+# Copyright (c) 2026 Luan Pestana
+# SPDX-License-Identifier: MIT
+
 from kivy.app import App
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
