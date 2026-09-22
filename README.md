@@ -1,10 +1,10 @@
-iSnake
+# iSnake
 
 A Snake game reimplementation written in Python with Kivy, featuring a playable game mode and an automated Snake Solver.
 
 The project focuses on a custom interface and configurable gameplay, with the Android APK built using APKVolt.
 
-Features
+## Features
 
 - Classic Snake gameplay
 - Snake Solver mode
@@ -18,13 +18,13 @@ Features
 - UI scaling based on screen size
 - Android APK build using APKVolt
 
-Game Modes
+## Game Modes
 
 Play
 
 Play Snake manually while keeping track of your score, elapsed time and movement speed.
 
-# Snake Solver
+Snake Solver
 
 An automated mode where the snake is controlled by a solver that determines its movements based on the current game state.
 
