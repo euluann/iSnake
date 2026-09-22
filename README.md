@@ -20,11 +20,11 @@ The project focuses on a custom interface and configurable gameplay, with the An
 
 ## Game Modes
 
-Play
+#### Play
 
 Play Snake manually while keeping track of your score, elapsed time and movement speed.
 
-Snake Solver
+#### Snake Solver
 
 An automated mode where the snake is controlled by a solver that determines its movements based on the current game state.
 
