@@ -26,7 +26,7 @@ Play Snake manually while keeping track of your score, elapsed time and movement
 
 #### Snake Solver
 
-An automated mode where the snake is controlled by a solver that determines its movements based on the current game state.
+An automated mode where the snake is controlled by a solver that determines its movements based on the current game state, using safe-move logic and the Wavefront algorithm.
 
 ## Interface
 
